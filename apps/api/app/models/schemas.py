@@ -88,22 +88,6 @@ class JobExtraction(BaseModel):
         return self
 
 
-def empty_extraction() -> dict:
-    """All-null answer, the scoring fallback when a model returns unusable output."""
-    return {
-        "title": "",
-        "seniority": Seniority.UNSPECIFIED.value,
-        "required_skills": [],
-        "years_experience_min": None,
-        "years_experience_max": None,
-        "work_mode": WorkMode.UNSPECIFIED.value,
-        "salary_min": None,
-        "salary_max": None,
-        "salary_currency": None,
-        "salary_period": None,
-    }
-
-
 # ---- API request / response models -------------------------------------------------------
 
 ModelKey = Literal["finetuned", "base", "gemini"]

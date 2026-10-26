@@ -19,8 +19,20 @@ uv run python data/build_dataset.py --hf <hf-dataset> --hf-text-column <column> 
 set -a; source .env; set +a
 uv run python data/label_with_gemini.py
 
+# 3. Hand-check the test split's draft labels (interactive, resumable)
+uv run python data/review_test_set.py review
+uv run python data/review_test_set.py status       # progress + how often Gemini needed fixing
+uv run python data/review_test_set.py finalize     # → data/test_set/test.jsonl (what evals/ scores)
+
 uv run pytest -q
 ```
+
+At the review prompt: Enter accepts the draft; `seniority=lead`, `salary_min=90k`,
+`required_skills=Python,SQL` (several with `;`) fix fields; `salary=none` clears all salary fields;
+`e` edits the whole label as JSON in `$EDITOR`; `s` skips, `u` undoes, `q` quits. Postings with the
+most grounding flags come first. Decisions are saved after every one, in
+`data/review/reviews.jsonl` — without posting text, so it is safe to commit, and it is your own work
+product: back it up.
 
 ## Test-set discipline
 
@@ -30,7 +42,9 @@ uv run pytest -q
   land in train while its twin sits in test.
 - Gemini's labels for the test split are drafts. They become ground truth only after hand review;
   `flags` on each label (salary digits missing from the text, skills not mentioned, ...) show where
-  to look first.
+  to look first. Review **all** of them, not just the flagged ones.
+- `finalize` refuses to run while postings are unreviewed and checks that no train posting shares
+  text with a test posting.
 
 ## Data licensing
 
@@ -41,6 +55,6 @@ postings — unless the source's license allows it.
 
 ## Still to do
 
-- `notebooks/train_qlora.ipynb` (Colab, Unsloth or TRL/PEFT)
-- `data/review_test_set.py` — export the test split for hand correction
-- `../evals/eval.py`
+- `notebooks/train_qlora.ipynb` (Colab, Unsloth or TRL/PEFT) — build examples with
+  `build_messages(text, "tuned")` / `target_json(label)` from `apps/api`, train on `split == "train"`
+  only, and write predictions for the test set in the format `evals/eval.py --predictions` imports.

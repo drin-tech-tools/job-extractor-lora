@@ -10,7 +10,8 @@
   ],
   "limits": [
     "Labels are distilled from Gemini, so the fine-tuned model inherits Gemini's judgement calls and mistakes; only the held-out test set was checked by hand.",
-    "The test set is small (about 150 postings), so differences of a few points between models are within noise.",
+    "Test labels were corrected starting from Gemini's drafts, so they can lean toward Gemini's choices (anchoring); Gemini's score here is likely a little optimistic.",
+    "The test set is small (about 150 postings), so differences of a few points between models can be within noise — check the intervals.",
     "Postings are English-language remote/tech roles drawn from a limited set of sources; other industries, languages and formats are untested.",
     "Postings longer than 6,000 characters are truncated before extraction.",
     "Salary is extracted as stated, with no currency conversion or annualisation."

@@ -16,10 +16,12 @@
 | Dataset builder + frozen test split | Done, tested — **not yet run on real data** |
 | Gemini labeler (distillation, resumable, grounding flags) | Done, tested — **not yet run against the live API** |
 | API + Next.js BFF playground | Done, tested; runs end to end in mock mode |
+| Test-set review tool (`review_test_set.py`) | Done, tested — **no labels reviewed yet** |
+| Eval harness (`evals/eval.py`: metrics, CIs, caching, publish guards) | Done, tested — **never run against a real model** |
 | Hand-check ~150 test labels | Not started |
 | Baseline (base model + Gemini) | Not started |
 | QLoRA fine-tune (Colab T4) | Not started |
-| Evaluation / results table | Not started — [Results page](apps/web/app/results/page.tsx) shows "pending" |
+| Results table | Not started — [Results page](apps/web/app/results/page.tsx) shows "pending" |
 | Publish adapter + model card to the HF Hub | Not started |
 
 No accuracy numbers are claimed anywhere in this repo until `evals/eval.py` produces them.
@@ -58,8 +60,8 @@ The 1.5B model can't run inside a Vercel function, so the API reaches it over an
 ```
 apps/api/        FastAPI: /health, /extract, /extract/compare   (schema + prompts live here)
 apps/web/        Next.js UI + BFF routes under /api/*
-training/        data/build_dataset.py, data/label_with_gemini.py, notebooks/ (Colab)
-evals/           eval contract + (todo) eval.py → apps/web/data/results.json
+training/        data/build_dataset.py, label_with_gemini.py, review_test_set.py, notebooks/ (Colab)
+evals/           eval.py + metrics.py → results table (apps/web/data/results.json)
 vercel.json      Vercel Services: web → api binding
 ```
 
@@ -67,10 +69,10 @@ vercel.json      Vercel Services: web → api binding
 
 1. **Data** — ~1–2k postings from a Hugging Face dataset and/or the Himalayas + Jobicy boards. The test split (150) is fixed by seeded hash *before labeling* and never moves; postings are de-duplicated by text and by (company, title) so reposts can't leak across the split.
 2. **Distillation** — Gemini labels every posting against the schema. Each label gets *grounding flags* (salary digits absent from the text, skills never mentioned, ...) to prioritise hand review.
-3. **Hand-check** — the ~150 test labels are corrected by hand; the model never trains on them.
-4. **Baseline** — base model (prompted with the full rules + schema) and Gemini on the test set: valid-JSON rate, per-field accuracy, latency.
+3. **Hand-check** — `review_test_set.py` steps through the ~150 test drafts (flagged ones first); you accept or fix each. The model never trains on them.
+4. **Baseline** — `eval.py --models base gemini`: base model (prompted with the full rules + schema) and Gemini on the test set — valid-JSON rate, per-field accuracy, latency, with confidence intervals.
 5. **Fine-tune** — QLoRA on Colab's free T4 using the short `tuned` prompt; the notebook builds examples with the same `build_messages` / `target_json` the API serves with, so there's no train/serve mismatch.
-6. **Evaluate + publish** — same test set, three models; adapter + model card to the HF Hub. See [`evals/README.md`](evals/README.md) for exact metric definitions.
+6. **Evaluate + publish** — same test set, three models, paired comparisons that say whether a gap is real or noise; adapter + model card to the HF Hub. See [`evals/README.md`](evals/README.md) for exact metric definitions and what counts against a model.
 
 ## Run it locally
 
@@ -82,7 +84,7 @@ cd apps/api && uv sync --group dev && EXTRACTOR_MOCK=1 uv run uvicorn app.main:a
 cd apps/web && npm install && npm run dev      # http://localhost:3000
 
 # Tests
-npm run test:api && npm run test:training && npm run test:web
+npm run test:api && npm run test:training && npm run test:evals && npm run test:web
 ```
 
 See [`training/README.md`](training/README.md) for the data pipeline and [`DEPLOYMENT.md`](DEPLOYMENT.md) for Vercel.
@@ -90,7 +92,8 @@ See [`training/README.md`](training/README.md) for the data pipeline and [`DEPLO
 ## Known limits (by design, before any results)
 
 - Labels are distilled from Gemini, so the fine-tuned model inherits Gemini's judgement calls; only the test set is human-checked.
-- ~150 test postings means differences of a few points are within noise.
+- ~150 test postings means differences of a few points can be within noise; the Results page shows intervals and only calls a gap real when it excludes zero.
+- Test labels are hand-corrected Gemini drafts, so they can lean toward Gemini (anchoring) and Gemini's own score is likely a little optimistic.
 - English remote/tech postings from a few sources; other industries, languages and formats are untested.
 - Postings over 6,000 characters are truncated; salary is extracted as written (no conversion).
 - The public demo has only a best-effort in-memory per-IP rate limit.

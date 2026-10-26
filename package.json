@@ -6,6 +6,7 @@
   "scripts": {
     "test:api": "cd apps/api && uv run pytest -q",
     "test:training": "cd training && uv run pytest -q",
+    "test:evals": "cd evals && uv run pytest -q",
     "test:web": "cd apps/web && npm run typecheck && npm test && npm run build",
     "postinstall": "npm --prefix apps/web install"
   },

@@ -48,6 +48,12 @@ apps/web/next-env.d.ts
 # Raw postings come from third-party boards/datasets with their own terms — never commit them.
 training/data/raw/
 training/data/labeled/
+training/data/test_set/
+# (training/data/review/ is NOT ignored: your hand-checked labels, stored without posting text)
+
+# Cached model outputs for the test postings
+evals/predictions/
+evals/.env
 
 # Model weights / training outputs (the adapter is published to the HF Hub, not git)
 *.safetensors

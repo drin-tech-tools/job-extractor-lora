@@ -1,0 +1,15 @@
+{
+  "name": "job-extractor-lora",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fine-tuned job-posting extractor — FastAPI + Next.js BFF monorepo with a QLoRA training pipeline",
+  "scripts": {
+    "test:api": "cd apps/api && uv run pytest -q",
+    "test:training": "cd training && uv run pytest -q",
+    "test:web": "cd apps/web && npm run typecheck && npm test && npm run build",
+    "postinstall": "npm --prefix apps/web install"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

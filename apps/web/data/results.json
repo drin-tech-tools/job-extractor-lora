@@ -1,0 +1,18 @@
+{
+  "status": "pending",
+  "generated_at": null,
+  "test_set_size": null,
+  "note": "Evaluation has not been run yet. evals/eval.py will overwrite this file.",
+  "models": [
+    { "key": "base", "label": "Base model (prompted)", "params": null, "metrics": null },
+    { "key": "finetuned", "label": "Base + LoRA (fine-tuned)", "params": null, "metrics": null },
+    { "key": "gemini", "label": "Gemini (reference)", "params": null, "metrics": null }
+  ],
+  "limits": [
+    "Labels are distilled from Gemini, so the fine-tuned model inherits Gemini's judgement calls and mistakes; only the held-out test set was checked by hand.",
+    "The test set is small (about 150 postings), so differences of a few points between models are within noise.",
+    "Postings are English-language remote/tech roles drawn from a limited set of sources; other industries, languages and formats are untested.",
+    "Postings longer than 6,000 characters are truncated before extraction.",
+    "Salary is extracted as stated, with no currency conversion or annualisation."
+  ]
+}

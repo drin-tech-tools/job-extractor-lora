@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+apps/api/.env
+apps/web/.env
+apps/web/.env.local
+training/.env
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+
+# Logs / misc
+*.log
+.uv/
+apps/web/next-env.d.ts
+
+# Raw postings come from third-party boards/datasets with their own terms — never commit them.
+training/data/raw/
+training/data/labeled/
+
+# Model weights / training outputs (the adapter is published to the HF Hub, not git)
+*.safetensors
+*.gguf
+*.bin
+training/outputs/

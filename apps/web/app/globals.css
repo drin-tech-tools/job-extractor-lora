@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-0: #0b0f14;
+  --bg-1: #121821;
+  --bg-2: #1a2330;
+  --line: #243041;
+  --text: #e8eef7;
+  --muted: #8b9bb0;
+  --accent: #3ecf8e;
+  --accent-dim: #1f6f4a;
+  --warn: #e8b84a;
+  --danger: #e86a6a;
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(62, 207, 142, 0.12), transparent 55%),
+    radial-gradient(900px 500px at 90% 0%, rgba(80, 140, 220, 0.1), transparent 50%),
+    linear-gradient(180deg, var(--bg-0), #080b10 60%, var(--bg-0));
+  background-attachment: fixed;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(62, 207, 142, 0.35);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-line {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.55s ease both;
+}
+
+.animate-fade-up-delay {
+  animation: fade-up 0.7s ease 0.12s both;
+}
+
+.animate-pulse-line {
+  animation: pulse-line 1.6s ease-in-out infinite;
+}
+
+.glass {
+  background: color-mix(in srgb, var(--bg-1) 88%, transparent);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
